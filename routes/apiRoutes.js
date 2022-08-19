@@ -33,6 +33,10 @@ router.post('/notes', async(req, res) => {
 
 router.delete('/notes/:id', async(req,res) => {
   console.log(req.params.id)
+  const oldNotes = await getNotes();
+  const filteredNotes = oldNotes.filter((note) => req.params.id !== note.id);
+  fs.writeFileSync('db/db.json', JSON.stringify(filteredNotes));
+  res.json({msg:`deleted note with id of ${req.params.id}`})
 })
 
 module.exports = router;
