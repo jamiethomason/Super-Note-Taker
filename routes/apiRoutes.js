@@ -23,20 +23,30 @@ router.get('/notes', async(req, res) => {
 
 //POST /api/notes should receive a new note to save on the request body, add it to the db.json file, and then return the new note to the client. You'll need to find a way to give each note a unique id when it's saved (look into npm packages that could do this for you).
 router.post('/notes', async(req, res) => {
-  const oldNotes = await getNotes()
+  try{
+    const oldNotes = await getNotes()
   let newNote = {title:req.body.title, text:req.body.text, id:uuidv4()}
   const newArray = [...oldNotes,newNote]
   console.log(newArray)
   fs.writeFileSync('db/db.json', JSON.stringify(newArray));
   res.json({msg:'ok'})
+  }
+  catch(err){
+    res.json(err)
+  }
 });
 
 router.delete('/notes/:id', async(req,res) => {
+  try{
   console.log(req.params.id)
   const oldNotes = await getNotes();
   const filteredNotes = oldNotes.filter((note) => req.params.id !== note.id);
   fs.writeFileSync('db/db.json', JSON.stringify(filteredNotes));
   res.json({msg:`deleted note with id of ${req.params.id}`})
+  }
+  catch(err){
+    res.json(err)
+  }
 })
 
 module.exports = router;
